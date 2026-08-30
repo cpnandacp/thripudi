@@ -17,17 +17,34 @@ window.addEventListener('load', function() {
 });
 setTimeout(hideSplashScreen, 2500);
 
-// Exit App Function
+// Exit App Function (Mobile & Desktop Compatible)
 function exitApp() {
   if (confirm("Thripudi Student Portal Says:\nAre you sure you want to exit?")) {
+    // 1. Android/Cordova Mobile Webview Apps (APK) ആണെങ്കിൽ
     if (navigator.app && navigator.app.exitApp) {
       navigator.app.exitApp();
-    } else {
+    } 
+    // 2. സാധാരണ മൊബൈൽ ബ്രൗസറുകളിൽ (Chrome/Safari)
+    else {
+      // ബ്രൗസർ ടാബ് ക്ലോസ് ചെയ്യാൻ ശ്രമിക്കുന്നു
+      window.opener = null;
+      window.open('', '_self', '');
       window.close();
+      
+      // ബ്രൗസർ ക്ലോസ് ചെയ്യുന്നത് തടഞ്ഞാൽ Blank Page-ലേക്ക് വിടുന്നു
+      setTimeout(function() {
+        document.body.innerHTML = `
+          <div style="display:flex; height:100vh; align-items:center; justify-content:center; text-align:center; font-family:sans-serif; background:#f8f9fa;">
+            <div>
+              <h3 style="color:#2c3e50; font-weight:bold;">You can now close this tab</h3>
+              <p style="color:#7f8c8d;">നിങ്ങൾക്ക് ഈ ബ്രൗസർ ടാബ് സ്വയം ക്ലോസ് ചെയ്യാം.</p>
+            </div>
+          </div>
+        `;
+      }, 300);
     }
   }
 }
-
 // Tab Switch Logic
 function switchTab(type) {
   const homeSec = document.getElementById('homeSec');
