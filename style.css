@@ -1,0 +1,124 @@
+/* ---------------------------------------------------
+   1. General Layout & Mobile Zoom Protection
+--------------------------------------------------- */
+html, body {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  background-color: #f4f6f9; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  touch-action: pan-x pan-y;
+  -webkit-text-size-adjust: 100%;
+}
+
+.main-container {
+  max-width: 100%;
+  padding: 8px !important;
+}
+
+.card { 
+  border-radius: 10px; 
+  border: none; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
+}
+
+.header-logo {
+  width: 35px;
+  height: 35px;
+  object-fit: contain;
+}
+
+/* ---------------------------------------------------
+   2. Input Controls (Fixes Keyboard Zooming Issues)
+--------------------------------------------------- */
+.form-label {
+  margin-bottom: 2px !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* iOS/Android keypress focus-ൽ Zoom തടയാൻ Font Size 16px നൽകിയിരിക്കുന്നു */
+.form-control, .form-select {
+  padding: 6px 10px !important;
+  font-size: 16px !important; 
+  touch-action: manipulation;
+}
+
+.nav-pills .nav-link.active { 
+  background-color: #4f46e5; 
+}
+
+.btn-primary { 
+  background-color: #4f46e5; 
+  border: none; 
+}
+
+.status-badge { 
+  font-size: 0.7rem; 
+  font-weight: 600; 
+  padding: 2px 4px; 
+  border-radius: 4px; 
+  display: inline-block; 
+}
+
+.bg-submitted { 
+  background-color: #d1fae5; 
+  color: #065f46; 
+}
+
+.bg-not-submitted { 
+  background-color: #fee2e2; 
+  color: #991b1b; 
+}
+
+/* ---------------------------------------------------
+   3. Custom Splash Screen
+--------------------------------------------------- */
+#splashScreen {
+  position: fixed;
+  top: 0; 
+  left: 0;
+  width: 100%; 
+  height: 100%;
+  background: linear-gradient(135deg, #4f46e5, #3730a3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.splash-logo {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+}
+
+/* ---------------------------------------------------
+   4. Report Full Page & Printing
+--------------------------------------------------- */
+#reportPage {
+  display: none;
+  position: fixed;
+  top: 0; 
+  left: 0;
+  width: 100%; 
+  height: 100%;
+  background-color: #ffffff;
+  z-index: 9998;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media print {
+  body * { visibility: hidden; }
+  #reportPage, #reportPage * { visibility: visible; }
+  #reportPage { position: absolute; left: 0; top: 0; width: 100%; padding: 0; }
+  .no-print { display: none !important; }
+}
