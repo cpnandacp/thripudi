@@ -266,3 +266,38 @@ function downloadPDF() {
     window.print();
   }
 }
+// Home Dashboard Dynamic Stats Update
+function updateDashboardStats() {
+  const syncStatus = document.getElementById('dashSyncStatus');
+  const syncIcon = document.getElementById('dashSyncIcon');
+  const studentCount = document.getElementById('dashStudentCount');
+
+  // Network Status Check
+  if (navigator.onLine) {
+    if (syncStatus) syncStatus.innerText = "Connected 🟢";
+    if (syncStatus) syncStatus.className = "fw-bold m-0 text-success";
+    if (syncIcon) syncIcon.className = "fa-solid fa-wifi text-success fs-2 mb-1";
+  } else {
+    if (syncStatus) syncStatus.innerText = "Offline 🔴";
+    if (syncStatus) syncStatus.className = "fw-bold m-0 text-danger";
+    if (syncIcon) syncIcon.className = "fa-solid fa-wifi-slash text-danger fs-2 mb-1";
+  }
+
+  // Fetch Total Student Count from Apps Script
+  const params = new URLSearchParams({ action: 'generateReport', course: 'All', sem: 'All' });
+  fetch(`${API_URL}?${params.toString()}`)
+    .then(res => res.json())
+    .then(data => {
+      if (Array.isArray(data) && studentCount) {
+        studentCount.innerText = data.length;
+      } else if (studentCount) {
+        studentCount.innerText = "0";
+      }
+    })
+    .catch(() => {
+      if (studentCount) studentCount.innerText = "Active";
+    });
+}
+
+// Auto Load Stats on Open
+window.addEventListener('load', updateDashboardStats);
