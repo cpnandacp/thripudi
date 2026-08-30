@@ -13,25 +13,20 @@ function hideSplashScreen() {
 
 window.addEventListener('load', function() {
   setTimeout(hideSplashScreen, 1200);
-  updateDashboardStats(); // Load Dashboard Stats
+  updateDashboardStats();
 });
 setTimeout(hideSplashScreen, 2500);
 
-// Exit App Function (Mobile & Desktop Compatible)
+// Exit App Function (Browser & Webview Mobile Friendly)
 function exitApp() {
   if (confirm("Thripudi Student Portal Says:\nAre you sure you want to exit?")) {
-    // 1. Android/Cordova Mobile Webview Apps (APK) ആണെങ്കിൽ
     if (navigator.app && navigator.app.exitApp) {
       navigator.app.exitApp();
-    } 
-    // 2. സാധാരണ മൊബൈൽ ബ്രൗസറുകളിൽ (Chrome/Safari)
-    else {
-      // ബ്രൗസർ ടാബ് ക്ലോസ് ചെയ്യാൻ ശ്രമിക്കുന്നു
+    } else {
       window.opener = null;
       window.open('', '_self', '');
       window.close();
       
-      // ബ്രൗസർ ക്ലോസ് ചെയ്യുന്നത് തടഞ്ഞാൽ Blank Page-ലേക്ക് വിടുന്നു
       setTimeout(function() {
         document.body.innerHTML = `
           <div style="display:flex; height:100vh; align-items:center; justify-content:center; text-align:center; font-family:sans-serif; background:#f8f9fa;">
@@ -45,6 +40,7 @@ function exitApp() {
     }
   }
 }
+
 // Tab Switch Logic
 function switchTab(type) {
   const homeSec = document.getElementById('homeSec');
@@ -61,7 +57,7 @@ function switchTab(type) {
   if (type === 'home') {
     homeSec.classList.remove('d-none');
     homeBtn.classList.add('active');
-    updateDashboardStats(); // Refresh stats when coming home
+    updateDashboardStats();
   } else if (type === 'mark') {
     markSec.classList.remove('d-none');
     markBtn.classList.add('active');
@@ -71,7 +67,7 @@ function switchTab(type) {
   }
 }
 
-// Home Dashboard Stats Update (Fixed 0 & stuck issue)
+// Home Dashboard & Native CSS Conic Pie Chart Function
 function updateDashboardStats() {
   const syncStatus = document.getElementById('dashSyncStatus');
   const syncIcon = document.getElementById('dashSyncIcon');
@@ -87,20 +83,76 @@ function updateDashboardStats() {
     if (syncIcon) syncIcon.className = "fa-solid fa-wifi-slash text-danger fs-2 mb-1";
   }
 
-  // Default course passed to get actual count
-  const params = new URLSearchParams({ action: 'generateReport', course: 'BA English', sem: 'Semester 1' });
+  // Action query without course filter to get total student count
+  const params = new URLSearchParams({ action: 'generateReport', course: '', sem: '' });
+  
   fetch(`${API_URL}?${params.toString()}`)
     .then(res => res.json())
     .then(data => {
-      if (Array.isArray(data) && studentCount) {
-        studentCount.innerText = data.length > 0 ? `${data.length}+ Students` : "Active";
-      } else if (studentCount) {
-        studentCount.innerText = "Active";
+      if (Array.isArray(data)) {
+        // Set exact count
+        if (studentCount) studentCount.innerText = data.length;
+
+        // Process Counts for Pie Chart
+        const courseCounts = {};
+        data.forEach(item => {
+          const c = item.course || 'Others';
+          courseCounts[c] = (courseCounts[c] || 0) + 1;
+        });
+
+        renderNativePieChart(courseCounts, data.length);
+      } else {
+        if (studentCount) studentCount.innerText = "0";
       }
     })
-    .catch(() => {
-      if (studentCount) studentCount.innerText = "Active";
+    .catch(err => {
+      console.error(err);
+      if (studentCount) studentCount.innerText = "Error";
     });
+}
+
+// Native Pure CSS Conic Gradient Pie Chart Renderer
+function renderNativePieChart(courseCounts, total) {
+  const pieElement = document.getElementById('customPieChart');
+  const legendElement = document.getElementById('chartLegend');
+  
+  if (!pieElement || !legendElement) return;
+
+  const colors = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'];
+  const keys = Object.keys(courseCounts);
+  
+  if (keys.length === 0 || total === 0) {
+    pieElement.style.background = '#e3e6f0';
+    legendElement.innerHTML = '<span class="text-muted">No student records found</span>';
+    return;
+  }
+
+  let gradientString = 'conic-gradient(';
+  let currentPercentage = 0;
+  let legendHtml = '';
+
+  keys.forEach((key, index) => {
+    const count = courseCounts[key];
+    const percent = (count / total) * 100;
+    const color = colors[index % colors.length];
+    
+    const start = currentPercentage;
+    currentPercentage += percent;
+    const end = currentPercentage;
+
+    gradientString += `${color} ${start}% ${end}%, `;
+    
+    legendHtml += `
+      <div class="d-flex align-items-center gap-1">
+        <span style="width:10px; height:10px; background:${color}; border-radius:50%; display:inline-block;"></span>
+        <span>${key}: <b>${count}</b></span>
+      </div>
+    `;
+  });
+
+  gradientString = gradientString.slice(0, -2) + ')';
+  pieElement.style.background = gradientString;
+  legendElement.innerHTML = legendHtml;
 }
 
 // Report Modal Controls
@@ -206,6 +258,7 @@ function submitStudent() {
   .then(res => {
     alert("Student Added Successfully!");
     document.getElementById('studentForm').reset();
+    updateDashboardStats();
   })
   .catch(err => {
     alert("Error saving student!");
@@ -304,7 +357,6 @@ function downloadPDF() {
   const course = document.getElementById('rptCourse').value.replace(/\s+/g, '_');
   const sem = document.getElementById('rptSem').value.replace(/\s+/g, '_');
 
-  // Direct Mobile Native Print fallback if html2pdf fails or on small screens
   if (typeof html2pdf !== 'undefined') {
     const opt = {
       margin:       [0.2, 0.2, 0.2, 0.2],
@@ -314,7 +366,6 @@ function downloadPDF() {
       jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
     
-    // Trigger download
     html2pdf().set(opt).from(element).save().catch(function() {
       window.print();
     });
