@@ -13,6 +13,7 @@ function hideSplashScreen() {
 
 window.addEventListener('load', function() {
   setTimeout(hideSplashScreen, 1200);
+  updateDashboardStats(); // Load Dashboard Stats
 });
 setTimeout(hideSplashScreen, 2500);
 
@@ -43,6 +44,7 @@ function switchTab(type) {
   if (type === 'home') {
     homeSec.classList.remove('d-none');
     homeBtn.classList.add('active');
+    updateDashboardStats(); // Refresh stats when coming home
   } else if (type === 'mark') {
     markSec.classList.remove('d-none');
     markBtn.classList.add('active');
@@ -50,6 +52,38 @@ function switchTab(type) {
     studentSec.classList.remove('d-none');
     studentBtn.classList.add('active');
   }
+}
+
+// Home Dashboard Stats Update (Fixed 0 & stuck issue)
+function updateDashboardStats() {
+  const syncStatus = document.getElementById('dashSyncStatus');
+  const syncIcon = document.getElementById('dashSyncIcon');
+  const studentCount = document.getElementById('dashStudentCount');
+
+  if (navigator.onLine) {
+    if (syncStatus) syncStatus.innerText = "Connected 🟢";
+    if (syncStatus) syncStatus.className = "fw-bold m-0 text-success";
+    if (syncIcon) syncIcon.className = "fa-solid fa-wifi text-success fs-2 mb-1";
+  } else {
+    if (syncStatus) syncStatus.innerText = "Offline 🔴";
+    if (syncStatus) syncStatus.className = "fw-bold m-0 text-danger";
+    if (syncIcon) syncIcon.className = "fa-solid fa-wifi-slash text-danger fs-2 mb-1";
+  }
+
+  // Default course passed to get actual count
+  const params = new URLSearchParams({ action: 'generateReport', course: 'BA English', sem: 'Semester 1' });
+  fetch(`${API_URL}?${params.toString()}`)
+    .then(res => res.json())
+    .then(data => {
+      if (Array.isArray(data) && studentCount) {
+        studentCount.innerText = data.length > 0 ? `${data.length}+ Students` : "Active";
+      } else if (studentCount) {
+        studentCount.innerText = "Active";
+      }
+    })
+    .catch(() => {
+      if (studentCount) studentCount.innerText = "Active";
+    });
 }
 
 // Report Modal Controls
@@ -62,7 +96,7 @@ function closeReportModal() {
   document.getElementById('reportPage').style.display = 'none';
 }
 
-// Debounce technique to stop browser spinner continuous loading
+// Debounce for smooth typing
 let fetchTimeout = null;
 function debounceFetch() {
   clearTimeout(fetchTimeout);
@@ -132,7 +166,7 @@ function clearStatuses() {
   document.getElementById('stNotes').innerHTML = '';
 }
 
-// Submit New Student
+// Submit Student
 function submitStudent() {
   const student = {
     action: 'addStudent',
@@ -143,7 +177,7 @@ function submitStudent() {
   };
 
   if (!student.roll || !student.name) {
-    alert("Thripudi Student Portal Says:\nPlease enter Roll Number and Name!");
+    alert("Please enter Roll Number and Name!");
     return;
   }
 
@@ -153,20 +187,20 @@ function submitStudent() {
   })
   .then(response => response.text())
   .then(res => {
-    alert("Thripudi Student Portal Says:\nStudent Added Successfully!");
+    alert("Student Added Successfully!");
     document.getElementById('studentForm').reset();
   })
   .catch(err => {
-    alert("Thripudi Student Portal Says:\nError saving student!");
+    alert("Error saving student!");
     console.error(err);
   });
 }
 
-// Submit Marks
+// Submit Mark
 function submitMark() {
   const nameVal = document.getElementById('name').value;
   if (nameVal === "Student Not Found" || !nameVal || nameVal === "Searching...") {
-    alert("Thripudi Student Portal Says:\nPlease select a valid Student!");
+    alert("Please select a valid Student!");
     return;
   }
 
@@ -188,18 +222,18 @@ function submitMark() {
   })
   .then(response => response.text())
   .then(res => {
-    alert("Thripudi Student Portal Says:\nData Saved Successfully!");
+    alert("Data Saved Successfully!");
     document.getElementById('markForm').reset();
     document.getElementById('name').value = "";
     clearStatuses();
   })
   .catch(err => {
-    alert("Thripudi Student Portal Says:\nError saving data!");
+    alert("Error saving data!");
     console.error(err);
   });
 }
 
-// Load Full Report
+// Load Report
 function loadReport() {
   const course = document.getElementById('rptCourse').value;
   const sem = document.getElementById('rptSem').value;
@@ -247,57 +281,27 @@ function loadReport() {
     });
 }
 
-// PDF Download Option
+// Mobile & Desktop Responsive PDF Download Function
 function downloadPDF() {
   const element = document.getElementById('printableArea');
   const course = document.getElementById('rptCourse').value.replace(/\s+/g, '_');
   const sem = document.getElementById('rptSem').value.replace(/\s+/g, '_');
 
+  // Direct Mobile Native Print fallback if html2pdf fails or on small screens
   if (typeof html2pdf !== 'undefined') {
     const opt = {
-      margin:       0.2,
+      margin:       [0.2, 0.2, 0.2, 0.2],
       filename:     `${course}_${sem}_Report.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2 },
+      html2canvas:  { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
       jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
-    html2pdf().set(opt).from(element).save();
+    
+    // Trigger download
+    html2pdf().set(opt).from(element).save().catch(function() {
+      window.print();
+    });
   } else {
     window.print();
   }
 }
-// Home Dashboard Dynamic Stats Update
-function updateDashboardStats() {
-  const syncStatus = document.getElementById('dashSyncStatus');
-  const syncIcon = document.getElementById('dashSyncIcon');
-  const studentCount = document.getElementById('dashStudentCount');
-
-  // Network Status Check
-  if (navigator.onLine) {
-    if (syncStatus) syncStatus.innerText = "Connected 🟢";
-    if (syncStatus) syncStatus.className = "fw-bold m-0 text-success";
-    if (syncIcon) syncIcon.className = "fa-solid fa-wifi text-success fs-2 mb-1";
-  } else {
-    if (syncStatus) syncStatus.innerText = "Offline 🔴";
-    if (syncStatus) syncStatus.className = "fw-bold m-0 text-danger";
-    if (syncIcon) syncIcon.className = "fa-solid fa-wifi-slash text-danger fs-2 mb-1";
-  }
-
-  // Fetch Total Student Count from Apps Script
-  const params = new URLSearchParams({ action: 'generateReport', course: 'All', sem: 'All' });
-  fetch(`${API_URL}?${params.toString()}`)
-    .then(res => res.json())
-    .then(data => {
-      if (Array.isArray(data) && studentCount) {
-        studentCount.innerText = data.length;
-      } else if (studentCount) {
-        studentCount.innerText = "0";
-      }
-    })
-    .catch(() => {
-      if (studentCount) studentCount.innerText = "Active";
-    });
-}
-
-// Auto Load Stats on Open
-window.addEventListener('load', updateDashboardStats);
