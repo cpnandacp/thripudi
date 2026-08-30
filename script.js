@@ -221,3 +221,20 @@ function loadReport() {
       tbody.innerHTML = '<tr><td colspan="7" class="text-center p-3 text-danger">Error loading report!</td></tr>';
     });
 }
+// Report PDF ആയി ഡൗൺലോഡ് ചെയ്യാനുള്ള ഫംഗ്ഷൻ
+function downloadPDF() {
+  const element = document.getElementById('printableArea');
+  const course = document.getElementById('rptCourse').value;
+  const sem = document.getElementById('rptSem').value;
+
+  const opt = {
+    margin:       0.5,
+    filename:     `${course}_${sem}_Report.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+
+  // Generate PDF
+  html2pdf().set(opt).from(element).save();
+}
