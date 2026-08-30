@@ -1,40 +1,58 @@
-// Google Apps Script Web App-ന്റെ URL ഇവിടെ നൽകുക
 const API_URL = "https://script.google.com/macros/s/AKfycbz-p21BXMjF7eNp5H0HB07PNm2Ib4pzHrubM0E3c_tOEtX_2gHO1UdZApj1EWMHtzE0/exec";
 
-// 1. Splash Screen Control (2 Seconds delay)
-window.addEventListener('load', function() {
-  setTimeout(function() {
-    const splash = document.getElementById('splashScreen');
-    if (splash) {
-      splash.style.opacity = '0';
-      setTimeout(function() {
-        splash.style.display = 'none';
-      }, 500);
-    }
-  }, 1800);
-});
-
-// 2. Tab Switch Logic
-function switchTab(type) {
-  const markSec = document.getElementById('markSec');
-  const studentSec = document.getElementById('studentSec');
-  const markBtn = document.getElementById('tab-mark-btn');
-  const studentBtn = document.getElementById('tab-student-btn');
-
-  if (type === 'mark') {
-    markSec.classList.remove('d-none');
-    studentSec.classList.add('d-none');
-    markBtn.classList.add('active');
-    studentBtn.classList.remove('active');
-  } else {
-    studentSec.classList.remove('d-none');
-    markSec.classList.add('d-none');
-    studentBtn.classList.add('active');
-    markBtn.classList.remove('active');
+// 1. Splash Screen Control
+function hideSplashScreen() {
+  const splash = document.getElementById('splashScreen');
+  if (splash) {
+    splash.style.opacity = '0';
+    setTimeout(function() {
+      splash.style.display = 'none';
+    }, 400);
   }
 }
 
-// 3. Report Modal Controls
+window.addEventListener('load', function() {
+  setTimeout(hideSplashScreen, 1200);
+});
+setTimeout(hideSplashScreen, 2500);
+
+// Exit App Function
+function exitApp() {
+  if (confirm("Thripudi Student Portal Says:\nAre you sure you want to exit?")) {
+    if (navigator.app && navigator.app.exitApp) {
+      navigator.app.exitApp();
+    } else {
+      window.close();
+    }
+  }
+}
+
+// Tab Switch Logic
+function switchTab(type) {
+  const homeSec = document.getElementById('homeSec');
+  const markSec = document.getElementById('markSec');
+  const studentSec = document.getElementById('studentSec');
+  
+  const homeBtn = document.getElementById('tab-home-btn');
+  const markBtn = document.getElementById('tab-mark-btn');
+  const studentBtn = document.getElementById('tab-student-btn');
+
+  [homeSec, markSec, studentSec].forEach(el => el.classList.add('d-none'));
+  [homeBtn, markBtn, studentBtn].forEach(el => el.classList.remove('active'));
+
+  if (type === 'home') {
+    homeSec.classList.remove('d-none');
+    homeBtn.classList.add('active');
+  } else if (type === 'mark') {
+    markSec.classList.remove('d-none');
+    markBtn.classList.add('active');
+  } else if (type === 'student') {
+    studentSec.classList.remove('d-none');
+    studentBtn.classList.add('active');
+  }
+}
+
+// Report Modal Controls
 function openReportModal() {
   document.getElementById('reportPage').style.display = 'block';
   loadReport();
@@ -44,7 +62,14 @@ function closeReportModal() {
   document.getElementById('reportPage').style.display = 'none';
 }
 
-// 4. Fetch Student Details on Roll No Input (GET Request)
+// Debounce technique to stop browser spinner continuous loading
+let fetchTimeout = null;
+function debounceFetch() {
+  clearTimeout(fetchTimeout);
+  fetchTimeout = setTimeout(fetchDetails, 600);
+}
+
+// Fetch Student Details
 function fetchDetails() {
   const roll = document.getElementById('roll').value;
   const course = document.getElementById('mkCourse').value;
@@ -107,7 +132,7 @@ function clearStatuses() {
   document.getElementById('stNotes').innerHTML = '';
 }
 
-// 5. Submit New Student (POST Request)
+// Submit New Student
 function submitStudent() {
   const student = {
     action: 'addStudent',
@@ -118,7 +143,7 @@ function submitStudent() {
   };
 
   if (!student.roll || !student.name) {
-    alert("Please enter Roll Number and Name!");
+    alert("Thripudi Student Portal Says:\nPlease enter Roll Number and Name!");
     return;
   }
 
@@ -128,20 +153,20 @@ function submitStudent() {
   })
   .then(response => response.text())
   .then(res => {
-    alert(res);
+    alert("Thripudi Student Portal Says:\nStudent Added Successfully!");
     document.getElementById('studentForm').reset();
   })
   .catch(err => {
-    alert("Error saving student!");
+    alert("Thripudi Student Portal Says:\nError saving student!");
     console.error(err);
   });
 }
 
-// 6. Submit Marks & Data (POST Request)
+// Submit Marks
 function submitMark() {
   const nameVal = document.getElementById('name').value;
   if (nameVal === "Student Not Found" || !nameVal || nameVal === "Searching...") {
-    alert("Please select a valid Student!");
+    alert("Thripudi Student Portal Says:\nPlease select a valid Student!");
     return;
   }
 
@@ -163,18 +188,18 @@ function submitMark() {
   })
   .then(response => response.text())
   .then(res => {
-    alert(res);
+    alert("Thripudi Student Portal Says:\nData Saved Successfully!");
     document.getElementById('markForm').reset();
     document.getElementById('name').value = "";
     clearStatuses();
   })
   .catch(err => {
-    alert("Error saving data!");
+    alert("Thripudi Student Portal Says:\nError saving data!");
     console.error(err);
   });
 }
 
-// 7. Load Full Report (GET Request)
+// Load Full Report
 function loadReport() {
   const course = document.getElementById('rptCourse').value;
   const sem = document.getElementById('rptSem').value;
@@ -221,20 +246,23 @@ function loadReport() {
       tbody.innerHTML = '<tr><td colspan="7" class="text-center p-3 text-danger">Error loading report!</td></tr>';
     });
 }
-// Report PDF ആയി ഡൗൺലോഡ് ചെയ്യാനുള്ള ഫംഗ്ഷൻ
+
+// PDF Download Option
 function downloadPDF() {
   const element = document.getElementById('printableArea');
-  const course = document.getElementById('rptCourse').value;
-  const sem = document.getElementById('rptSem').value;
+  const course = document.getElementById('rptCourse').value.replace(/\s+/g, '_');
+  const sem = document.getElementById('rptSem').value.replace(/\s+/g, '_');
 
-  const opt = {
-    margin:       0.5,
-    filename:     `${course}_${sem}_Report.pdf`,
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2 },
-    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-  };
-
-  // Generate PDF
-  html2pdf().set(opt).from(element).save();
+  if (typeof html2pdf !== 'undefined') {
+    const opt = {
+      margin:       0.2,
+      filename:     `${course}_${sem}_Report.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  } else {
+    window.print();
+  }
 }
