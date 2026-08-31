@@ -22,37 +22,45 @@
     </div>
   </div>
 
-  <!-- MAIN APP CONTAINER -->
-  <div class="container main-container py-2">
-    
-    <!-- App Header -->
-    <div class="app-header d-flex align-items-center justify-content-between card p-2 px-3 mb-2 shadow-sm">
-      <div class="d-flex align-items-center gap-2">
-        <img src="./assets/logo.png" alt="Logo" class="header-logo" onerror="this.src='https://ui-avatars.com/api/?name=App&background=0D6EFD&color=fff'">
-        <div>
-          <h6 class="fw-bold text-primary m-0" style="line-height: 1.2;">Nandakumars Application</h6>
-          <small class="text-muted" style="font-size: 11px;">Students Internal Marks Entry</small>
-        </div>
-      </div>
-      <button class="btn btn-outline-danger btn-sm px-3 fw-bold" onclick="exitApp()"><i class="fa-solid fa-power-off me-1"></i> Exit</button>
-    </div>
+ <!-- App Header Layout Fix -->
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: #ffffff; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px;">
+  
+  <!-- Left Side: Logo -->
+  <div style="flex: 1; display: flex; align-items: center; justify-content: flex-start;">
+    <img src="./assets/logo.png" alt="Logo" style="height: 45px; width: 45px; object-fit: cover; border-radius: 50%;" onerror="this.src='https://ui-avatars.com/api/?name=NK&background=6366F1&color=fff'">
+  </div>
+
+  <!-- Center Side: Title & Subtitle -->
+  <div style="flex: 2; text-align: center;">
+    <h6 style="margin: 0; font-weight: 700; color: #4f46e5; font-size: 18px; line-height: 1.2;">Nandakumars Application</h6>
+    <small style="color: #64748b; font-size: 12px; font-weight: 500;">Students Internal Marks Entry</small>
+  </div>
+
+  <!-- Right Side: Exit Button -->
+  <div style="flex: 1; display: flex; align-items: center; justify-content: flex-end;">
+    <button onclick="exitApp()" style="display: inline-flex; align-items: center; gap: 6px; background: transparent; border: 1.5px solid #ef4444; color: #ef4444; padding: 6px 18px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
+      <i class="fa-solid fa-power-off"></i> Exit
+    </button>
+  </div>
+
+</div>
 
     <!-- Navigation Tabs -->
     <ul class="nav nav-pills nav-justified mb-3 card p-1 flex-row shadow-sm" id="pills-tab">
       <li class="nav-item">
-        <button class="nav-link active py-2 px-1 small fw-bold" id="tab-home-btn" onclick="switchTab('home')"><i class="fa-solid fa-house me-1"></i> Home</button>
+        <button class="nav-link active py-2 px-1 small" id="tab-home-btn" onclick="switchTab('home')"><i class="fa-solid fa-house me-1"></i> Home</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link py-2 px-1 small fw-bold" id="tab-mark-btn" onclick="switchTab('mark')"><i class="fa-solid fa-pen-to-square me-1"></i> Marks</button>
+        <button class="nav-link py-2 px-1 small" id="tab-mark-btn" onclick="switchTab('mark')"><i class="fa-solid fa-pen-to-square me-1"></i> Marks</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link py-2 px-1 small fw-bold" id="tab-student-btn" onclick="switchTab('student')"><i class="fa-solid fa-user-plus me-1"></i> Add</button>
+        <button class="nav-link py-2 px-1 small" id="tab-student-btn" onclick="switchTab('student')"><i class="fa-solid fa-user-plus me-1"></i> Add</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link py-2 px-1 small fw-bold" id="tab-settings-btn" onclick="switchTab('settings')"><i class="fa-solid fa-gear me-1"></i> Settings</button>
+        <button class="nav-link py-2 px-1 small" id="tab-settings-btn" onclick="switchTab('settings')"><i class="fa-solid fa-gear me-1"></i> Settings</button>
       </li>
       <li class="nav-item">
-        <button class="nav-link bg-success text-white fw-bold py-2 px-1 small" id="tab-report-btn" onclick="openReportModal()"><i class="fa-solid fa-chart-pie me-1"></i> Report</button>
+        <button class="nav-link btn-success text-white fw-bold py-2 px-1 small" id="tab-report-btn" onclick="openReportModal()"><i class="fa-solid fa-chart-pie me-1"></i> Report</button>
       </li>
     </ul>
 
@@ -61,9 +69,9 @@
       <div class="hero-banner p-3 p-md-4 shadow-sm mb-3">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <span class="badge bg-warning text-dark mb-2 font-monospace" id="dashSession">Academic Session 2026-27</span>
+            <span class="badge bg-white text-dark mb-2 font-monospace shadow-sm" id="dashSession">Academic Session 2026-27</span>
             <h4 class="fw-bold mb-1" id="dashFaculty">Welcome back, NANDAKUMAR! 👋</h4>
-            <p class="small opacity-75 m-0" id="dashCollege">Thripudi, Mudur</p>
+            <p class="small opacity-90 m-0" id="dashCollege">Thripudi, Mudur</p>
           </div>
           <i class="fa-solid fa-graduation-cap fs-1 opacity-25 d-none d-sm-block"></i>
         </div>
@@ -81,7 +89,7 @@
           <div class="card border-0 bg-success bg-opacity-10 p-3 text-center shadow-sm">
             <i class="fa-solid fa-book-open text-success fs-3 mb-1"></i>
             <span class="small text-muted fw-bold">Active Courses</span>
-            <h4 class="fw-bold m-0 text-success" id="dashCourseCount">6 Courses</h4>
+            <h4 class="fw-bold m-0 text-success" id="dashCourseCount">...</h4>
           </div>
         </div>
         <div class="col-6 col-md-3">
@@ -103,7 +111,7 @@
       <div class="card border-0 bg-light p-3 p-md-4 shadow-sm text-center">
         <h6 class="fw-bold text-secondary mb-3 small text-uppercase">Course Wise Distribution</h6>
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-4">
-          <div id="customPieChart" style="width: 140px; height: 140px; border-radius: 50%; background: conic-gradient(#4e73df 0% 100%); border: 4px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
+          <div id="customPieChart" style="width: 140px; height: 140px; border-radius: 50%; background: conic-gradient(#6366f1 0% 100%); border: 4px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"></div>
           <div id="chartLegend" class="d-flex flex-wrap justify-content-center justify-content-md-start gap-3 small"></div>
         </div>
       </div>
@@ -112,7 +120,7 @@
     <!-- MARK & SEARCH SECTION -->
     <div id="markSec" class="card p-3 p-md-4 shadow-sm d-none">
       <div id="searchBoxView" class="col-12 col-md-8 col-lg-6 mx-auto">
-        <h5 class="fw-bold mb-3 text-primary text-center"><i class="fa-solid fa-magnifying-glass me-1"></i> Search Student or Class</h5>
+        <h5 class="fw-bold mb-3 text-indigo text-center" style="color: #4f46e5;"><i class="fa-solid fa-magnifying-glass me-1"></i> Search Student or Class</h5>
         <div class="row g-2">
           <div class="col-6 mb-2">
             <label class="form-label small fw-bold">Course</label>
@@ -148,20 +156,20 @@
 
       <div id="individualProfileView" class="d-none">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <button class="btn btn-sm btn-outline-secondary fw-bold" onclick="showSearchBox()"><i class="fa-solid fa-arrow-left me-1"></i> Back</button>
-          <button class="btn btn-sm btn-danger fw-bold shadow-sm" onclick="downloadIndividualPDF()"><i class="fa-solid fa-file-pdf me-1"></i> Save PDF</button>
+          <button class="btn btn-sm btn-outline-secondary fw-bold rounded-pill" onclick="showSearchBox()"><i class="fa-solid fa-arrow-left me-1"></i> Back</button>
+          <button class="btn btn-sm btn-danger fw-bold shadow-sm rounded-pill" onclick="downloadIndividualPDF()"><i class="fa-solid fa-file-pdf me-1"></i> Save PDF</button>
         </div>
 
-        <div id="printableStudentProfile" class="p-2 bg-white rounded">
+        <div id="printableStudentProfile" class="p-2 bg-white rounded-3">
           <div class="row g-3">
             <div class="col-12 col-md-5">
               <div class="card border-0 bg-light p-3 shadow-sm mb-3 text-center text-md-start">
                 <div class="d-flex flex-column flex-md-row align-items-center gap-3">
-                  <img id="stPhoto" src="https://ui-avatars.com/api/?name=Student&background=0D6EFD&color=fff" alt="Student Photo" class="rounded-circle border shadow-sm student-profile-img">
+                  <img id="stPhoto" src="https://ui-avatars.com/api/?name=Student&background=6366F1&color=fff" alt="Student Photo" class="rounded-circle student-profile-img">
                   <div>
-                    <h4 class="fw-bold mb-0 text-primary" id="profName">Student Name</h4>
+                    <h4 class="fw-bold mb-0 text-indigo" id="profName" style="color: #4f46e5;">Student Name</h4>
                     <p class="text-muted small mb-1" id="profDetails">BA English | Semester 1</p>
-                    <span class="badge bg-primary" id="profRoll">Roll No: --</span>
+                    <span class="badge bg-primary rounded-pill px-3" id="profRoll">Roll No: --</span>
                   </div>
                 </div>
               </div>
@@ -170,19 +178,19 @@
                 <h6 class="fw-bold small text-uppercase text-secondary mb-3">Academic Progress</h6>
                 <div class="mb-2">
                   <div class="d-flex justify-content-between small fw-bold mb-1"><span>Assignment</span><span id="progAssignVal">0%</span></div>
-                  <div class="progress" style="height: 10px;"><div id="progAssignBar" class="progress-bar bg-success" style="width: 0%"></div></div>
+                  <div class="progress"><div id="progAssignBar" class="progress-bar bg-success" style="width: 0%"></div></div>
                 </div>
                 <div class="mb-2">
                   <div class="d-flex justify-content-between small fw-bold mb-1"><span>Seminar</span><span id="progSemVal">0%</span></div>
-                  <div class="progress" style="height: 10px;"><div id="progSemBar" class="progress-bar bg-info" style="width: 0%"></div></div>
+                  <div class="progress"><div id="progSemBar" class="progress-bar bg-info" style="width: 0%"></div></div>
                 </div>
                 <div class="mb-2">
                   <div class="d-flex justify-content-between small fw-bold mb-1"><span>Exam</span><span id="progExamVal">0%</span></div>
-                  <div class="progress" style="height: 10px;"><div id="progExamBar" class="progress-bar bg-warning" style="width: 0%"></div></div>
+                  <div class="progress"><div id="progExamBar" class="progress-bar bg-warning" style="width: 0%"></div></div>
                 </div>
                 <div class="mb-2">
                   <div class="d-flex justify-content-between small fw-bold mb-1"><span>Notes</span><span id="progNotesVal">0%</span></div>
-                  <div class="progress" style="height: 10px;"><div id="progNotesBar" class="progress-bar bg-primary" style="width: 0%"></div></div>
+                  <div class="progress"><div id="progNotesBar" class="progress-bar bg-primary" style="width: 0%"></div></div>
                 </div>
               </div>
             </div>
@@ -217,8 +225,8 @@
 
       <div id="classDirectoryView" class="d-none">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <button class="btn btn-sm btn-outline-secondary fw-bold" onclick="showSearchBox()"><i class="fa-solid fa-arrow-left me-1"></i> Back</button>
-          <h5 class="fw-bold text-primary m-0" id="classDirTitle">Class Directory</h5>
+          <button class="btn btn-sm btn-outline-secondary fw-bold rounded-pill" onclick="showSearchBox()"><i class="fa-solid fa-arrow-left me-1"></i> Back</button>
+          <h5 class="fw-bold text-indigo m-0" id="classDirTitle" style="color: #4f46e5;">Class Directory</h5>
         </div>
         <div id="classListContainer" class="row g-3"></div>
       </div>
@@ -227,7 +235,7 @@
     <!-- ADD STUDENT SECTION -->
     <div id="studentSec" class="card p-3 p-md-4 shadow-sm d-none">
       <div class="col-12 col-md-8 col-lg-6 mx-auto">
-        <h5 class="fw-bold mb-3 text-primary text-center">Add New Student</h5>
+        <h5 class="fw-bold mb-3 text-indigo text-center" style="color: #4f46e5;">Add New Student</h5>
         <form id="studentForm">
           <div class="mb-3">
             <label class="form-label small fw-bold">Roll Number</label>
@@ -264,10 +272,10 @@
       </div>
     </div>
 
-    <!-- SETTINGS SECTION (Basic_Data Sync) -->
+    <!-- SETTINGS SECTION -->
     <div id="settingsSec" class="card p-3 p-md-4 shadow-sm d-none">
       <div class="col-12 col-md-8 col-lg-6 mx-auto">
-        <h5 class="fw-bold mb-3 text-primary text-center"><i class="fa-solid fa-sliders me-1"></i> Application Settings</h5>
+        <h5 class="fw-bold mb-3 text-indigo text-center" style="color: #4f46e5;"><i class="fa-solid fa-sliders me-1"></i> Application Settings</h5>
         <form id="settingsForm">
           <div class="mb-3">
             <label class="form-label small fw-bold">College Name</label>
@@ -295,12 +303,12 @@
   <!-- REPORT OVERLAY -->
   <div id="reportPage">
     <div class="container py-2">
-      <div class="card p-3 mb-3 bg-light border shadow-sm">
+      <div class="card p-3 mb-3 border-0 shadow-lg">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="fw-bold text-primary m-0"><i class="fa-solid fa-chart-column me-1"></i> Academic Report</h5>
+          <h5 class="fw-bold text-indigo m-0" style="color: #4f46e5;"><i class="fa-solid fa-chart-column me-1"></i> Academic Report</h5>
           <div>
-            <button class="btn btn-sm btn-success me-1 fw-bold px-3" onclick="downloadPDF()"><i class="fa-solid fa-file-arrow-down me-1"></i> Save PDF</button>
-            <button class="btn btn-sm btn-danger fw-bold px-3" onclick="closeReportModal()"><i class="fa-solid fa-xmark me-1"></i> Close</button>
+            <button class="btn btn-sm btn-success me-1 fw-bold px-3 rounded-pill" onclick="downloadPDF()"><i class="fa-solid fa-file-arrow-down me-1"></i> Save PDF</button>
+            <button class="btn btn-sm btn-danger fw-bold px-3 rounded-pill" onclick="closeReportModal()"><i class="fa-solid fa-xmark me-1"></i> Close</button>
           </div>
         </div>
         
@@ -327,7 +335,7 @@
           </div>
         </div>
         
-        <div id="printableArea" class="bg-white p-3 border rounded shadow-sm">
+        <div id="printableArea" class="bg-white p-3 border rounded-3 shadow-sm">
           <div class="text-center mb-3">
             <h4 class="fw-bold mb-1" id="rptHeading">Academic Report</h4>
             <p class="text-muted small m-0" id="rptSubHeading">Full Class Summary</p>

@@ -118,7 +118,7 @@ function loadStudentProfile(course, sem, roll) {
 
   const photoImg = document.getElementById('stPhoto');
   const localPhotoPath = getLocalPhotoPath(course, roll);
-  const fallbackAvatar = `https://ui-avatars.com/api/?name=${roll}&background=0D6EFD&color=fff`;
+  const fallbackAvatar = `https://ui-avatars.com/api/?name=${roll}&background=6366F1&color=fff`;
 
   if (photoImg) {
     photoImg.src = localPhotoPath;
@@ -223,7 +223,7 @@ function loadClassDirectory(course, sem) {
         col.className = 'col-6 col-sm-4 col-md-3 col-lg-2';
         col.innerHTML = `
           <div class="card p-2 text-center shadow-sm border-0 bg-light h-100" style="cursor:pointer;" onclick="loadStudentProfile('${course}', '${sem}', '${st.roll}')">
-            <img src="${localPhotoPath}" onerror="this.src='https://ui-avatars.com/api/?name=${st.roll}&background=0D6EFD&color=fff';" class="rounded-circle mx-auto mb-1 border" style="width:55px; height:55px; object-fit:cover;">
+            <img src="${localPhotoPath}" onerror="this.src='https://ui-avatars.com/api/?name=${st.roll}&background=6366F1&color=fff';" class="rounded-circle mx-auto mb-1 border" style="width:55px; height:55px; object-fit:cover;">
             <h6 class="fw-bold small mb-0 text-truncate">${st.name}</h6>
             <span class="badge bg-secondary" style="font-size:10px;">Roll: ${st.roll}</span>
           </div>
@@ -372,7 +372,7 @@ function renderNativePieChart(courseCounts, total) {
   const legendElement = document.getElementById('chartLegend');
   if (!pieElement || !legendElement || total === 0) return;
 
-  const colors = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'];
+  const colors = ['#6366f1', '#10b981', '#06b6d4', '#f59e0b', '#ef4444', '#8b5cf6'];
   const keys = Object.keys(courseCounts);
 
   let gradientString = 'conic-gradient(';
@@ -405,5 +405,30 @@ function renderNativePieChart(courseCounts, total) {
 function exitApp() {
   if (confirm("Are you sure you want to exit?")) {
     window.close();
+  }
+}
+function exitApp() {
+  if (confirm("Are you sure you want to exit?")) {
+    // 1. വിൻഡോ നേരിട്ട് ക്ലോസ് ചെയ്യാൻ ശ്രമിക്കുന്നു
+    window.open('', '_self', '');
+    window.close();
+
+    // 2. പാരന്റ് വിൻഡോ വഴിയുള്ള ക്ലോസിംഗ് ശ്രമം
+    if (!window.closed) {
+      window.top.close();
+    }
+
+    // 3. ബ്രൗസർ സെക്യൂരിറ്റി കാരണം തടയപ്പെടുകയാണെങ്കിൽ, പേജിനെ Kill ചെയ്ത് Blank ആക്കുന്നു
+    setTimeout(() => {
+      document.body.innerHTML = `
+        <div style="height: 100vh; display: flex; align-items: center; justify-content: center; background: #0f172a; color: white; font-family: sans-serif; text-align: center;">
+          <div>
+            <h3>Application Closed</h3>
+            <p style="color: #94a3b8;">You can now safely close this tab.</p>
+          </div>
+        </div>
+      `;
+      window.location.href = "about:blank";
+    }, 100);
   }
 }
